@@ -107,4 +107,8 @@ Open `http://localhost:8080`. The GitHub Actions workflow repeats formatting, st
 
 ## Deployment
 
-`render.yaml` defines one Docker web service with health checks and deploys only after CI passes. The free service plan can sleep between requests, so the first request after an idle period may take longer. Change the plan before launch if consistent response time is required.
+`render.yaml` defines one Docker web service with health checks and deploys only after CI passes.
+
+To provision it, create a new Blueprint in the Render dashboard, connect this repository, and apply the detected configuration. Render then builds the `Dockerfile` and monitors `/healthz`.
+
+The free service plan can sleep between requests, so the first request after an idle period may take longer. Change the plan before launch if consistent response time is required.
