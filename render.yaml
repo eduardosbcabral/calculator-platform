@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: calculator-platform
+    runtime: docker
+    plan: free
+    healthCheckPath: /healthz
+    autoDeployTrigger: checksPass
+    maxShutdownDelaySeconds: 15

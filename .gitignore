@@ -1,0 +1,5 @@
+.DS_Store
+coverage.out
+frontend/coverage/
+frontend/dist/
+frontend/node_modules/
