@@ -6,11 +6,12 @@ A small full-stack calculator with a React interface and a Go HTTP API. It suppo
 
 The repository has two deployable build inputs and one runtime process:
 
-- `internal/calculator` contains the calculation feature, its HTTP boundary, and focused tests.
-- `cmd/api` composes the HTTP server and serves the built frontend in production.
-- `frontend/src/calculator` contains the React feature and its API client.
+- `internal/calculator` keeps calculation rules, request validation, HTTP handling, and response mapping in one feature package with separate responsibilities.
+- `cmd/api` separates process startup from server composition and serves the built frontend in production.
+- `frontend/src/pages` contains the thin page composition entry.
+- `frontend/src/features/calculator` owns the calculator model, API boundary, workflow hook, components, and focused tests.
 
-The Go service uses only the standard library. The feature is grouped by behavior instead of technical layers. This keeps validation, calculation rules, and tests close without adding interfaces or abstractions that have only one implementation.
+The Go service uses only the standard library. The feature stays grouped by behavior, while small files separate transport parsing, validation, result mapping, and calculation rules. The React page delegates interaction state and the calculation workflow to a feature-local hook. This keeps responsibilities clear without adding interfaces or shared abstractions that have only one implementation.
 
 Production uses a multi-stage container. Node builds the static assets, Go builds one static binary, and the final image contains only those artifacts. The browser calls the API on the same origin, so no CORS configuration is needed.
 

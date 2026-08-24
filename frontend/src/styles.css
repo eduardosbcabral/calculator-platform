@@ -42,6 +42,11 @@
   border-color: #8f9baa;
 }
 
+.operation:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
 .operation[aria-pressed='true'] {
   border-color: #2457d6;
   background: #2457d6;
@@ -117,7 +122,7 @@ input {
   background: #1949bd;
 }
 
-.primary:disabled {
+.actions button:disabled {
   cursor: wait;
   opacity: 0.65;
 }

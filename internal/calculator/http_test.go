@@ -28,6 +28,7 @@ func TestCalculateHandler(t *testing.T) {
 		{name: "unsupported operation", method: http.MethodPost, contentType: "application/json", body: `{"operation":"modulo","left":7,"right":5}`, wantStatus: http.StatusBadRequest, wantCode: "unsupported_operation"},
 		{name: "division by zero", method: http.MethodPost, contentType: "application/json", body: `{"operation":"divide","left":7,"right":0}`, wantStatus: http.StatusBadRequest, wantCode: "division_by_zero"},
 		{name: "negative square root", method: http.MethodPost, contentType: "application/json", body: `{"operation":"square_root","left":-1}`, wantStatus: http.StatusBadRequest, wantCode: "negative_square_root"},
+		{name: "non-finite result", method: http.MethodPost, contentType: "application/json", body: `{"operation":"multiply","left":1.7976931348623157e308,"right":2}`, wantStatus: http.StatusBadRequest, wantCode: "non_finite_result"},
 		{name: "unknown field", method: http.MethodPost, contentType: "application/json", body: `{"operation":"add","left":7,"right":5,"extra":true}`, wantStatus: http.StatusBadRequest, wantCode: "invalid_json"},
 		{name: "trailing object", method: http.MethodPost, contentType: "application/json", body: `{"operation":"add","left":7,"right":5}{}`, wantStatus: http.StatusBadRequest, wantCode: "invalid_json"},
 		{name: "malformed json", method: http.MethodPost, contentType: "application/json", body: `{`, wantStatus: http.StatusBadRequest, wantCode: "invalid_json"},
@@ -54,7 +55,7 @@ func TestCalculateHandler(t *testing.T) {
 			}
 
 			if test.wantStatus == http.StatusOK {
-				var got response
+				var got calculationResponse
 				if err := json.NewDecoder(recorder.Body).Decode(&got); err != nil {
 					t.Fatal(err)
 				}

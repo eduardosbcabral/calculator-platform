@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom/vitest'
-import { cleanup, render, screen } from '@testing-library/react'
+import { act, cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { Calculator } from './Calculator'
+import { Calculator } from './components/Calculator'
 
 afterEach(() => {
   cleanup()
@@ -43,6 +43,32 @@ describe('Calculator', () => {
     await user.click(screen.getByRole('button', { name: 'Calculate' }))
 
     expect(await screen.findByText('1234567890123')).toBeInTheDocument()
+  })
+
+  it('locks value-changing controls while a calculation is pending', async () => {
+    let resolveResponse!: (response: Response) => void
+    const response = new Promise<Response>((resolve) => {
+      resolveResponse = resolve
+    })
+    vi.stubGlobal('fetch', vi.fn().mockReturnValue(response))
+    const user = userEvent.setup()
+    render(<Calculator />)
+
+    await user.type(screen.getByLabelText('First number'), '7')
+    await user.type(screen.getByLabelText('Second number'), '5')
+    await user.click(screen.getByRole('button', { name: 'Calculate' }))
+
+    expect(screen.getByLabelText('First number')).toBeDisabled()
+    expect(screen.getByLabelText('Second number')).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Subtract' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Clear' })).toBeDisabled()
+
+    await act(async () => {
+      resolveResponse(new Response(JSON.stringify({ result: 12 }), { status: 200 }))
+    })
+
+    expect(await screen.findByText('12')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Clear' })).toBeEnabled()
   })
 
   it('sends only one operand for square root', async () => {

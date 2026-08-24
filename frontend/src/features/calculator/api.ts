@@ -1,12 +1,4 @@
-export type BinaryOperation =
-  | 'add'
-  | 'subtract'
-  | 'multiply'
-  | 'divide'
-  | 'power'
-  | 'percentage'
-
-export type Operation = BinaryOperation | 'square_root'
+import type { BinaryOperation } from './model'
 
 export type CalculationRequest =
   | { operation: BinaryOperation; left: number; right: number }
