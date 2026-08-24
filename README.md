@@ -13,11 +13,23 @@ The repository has two deployable build inputs and one runtime process:
 
 The Go service uses only the standard library. The feature stays grouped by behavior, while small files separate transport parsing, validation, result mapping, and calculation rules. The React page delegates interaction state and the calculation workflow to a feature-local hook. This keeps responsibilities clear without adding interfaces or shared abstractions that have only one implementation.
 
-Production uses a multi-stage container. Node builds the static assets, Go builds one static binary, and the final image contains only those artifacts. The browser calls the API on the same origin, so no CORS configuration is needed.
+Production uses a multi-stage container. Node builds the static assets, Go builds one static binary, and a small Alpine runtime runs the non-root process and serves those artifacts. The browser calls the API on the same origin, so no CORS configuration is needed.
 
 ## API
 
-`POST /api/calculate` accepts JSON. Binary operations use both operands:
+`POST /api/calculate` accepts JSON. The supported operations are:
+
+| Operation | Calculation |
+| --- | --- |
+| `add` | `left + right` |
+| `subtract` | `left - right` |
+| `multiply` | `left * right` |
+| `divide` | `left / right` |
+| `power` | `left` raised to `right` |
+| `percentage` | `left` percent of `right` |
+| `square_root` | Square root of `left` |
+
+Binary operations use both operands:
 
 ```json
 {
@@ -57,7 +69,7 @@ Validation errors use stable codes and readable messages:
 }
 ```
 
-The API uses Go `float64` values and rejects results that are not finite. `GET /healthz` provides a health check.
+Requests must use `application/json`, contain one object with known fields, and stay within 4 KiB. The API uses Go `float64` values and rejects invalid operands and results that are not finite. `GET /healthz` provides a health check.
 
 ## Local development
 
@@ -92,6 +104,7 @@ go test -race -coverprofile=coverage.out ./...
 go test -bench=. -benchmem ./internal/calculator
 
 cd frontend
+npm ci
 npm run lint
 npm run test:coverage
 npm run build

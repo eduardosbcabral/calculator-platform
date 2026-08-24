@@ -115,4 +115,18 @@ describe('Calculator', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Cannot divide by zero.')
   })
+
+  it('shows a generic error when the API response is not JSON', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
+      new Response('Bad gateway', { status: 502, headers: { 'Content-Type': 'text/plain' } }),
+    ))
+    const user = userEvent.setup()
+    render(<Calculator />)
+
+    await user.type(screen.getByLabelText('First number'), '7')
+    await user.type(screen.getByLabelText('Second number'), '5')
+    await user.click(screen.getByRole('button', { name: 'Calculate' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('The calculation failed.')
+  })
 })

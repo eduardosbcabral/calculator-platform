@@ -13,12 +13,14 @@ export async function calculate(input: CalculationRequest): Promise<number> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
   })
-  const body = (await response.json()) as CalculationResponse & ErrorResponse
+  const body = (await response.json().catch(() => null)) as
+    | (CalculationResponse & ErrorResponse)
+    | null
 
   if (!response.ok) {
-    throw new Error(body.error?.message ?? 'The calculation failed.')
+    throw new Error(body?.error?.message ?? 'The calculation failed.')
   }
-  if (!Number.isFinite(body.result)) {
+  if (!body || !Number.isFinite(body.result)) {
     throw new Error('The server returned an invalid result.')
   }
 

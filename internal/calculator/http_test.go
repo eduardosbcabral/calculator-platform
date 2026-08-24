@@ -35,6 +35,7 @@ func TestCalculateHandler(t *testing.T) {
 		{name: "wrong content type", method: http.MethodPost, contentType: "text/plain", body: `{}`, wantStatus: http.StatusUnsupportedMediaType, wantCode: "unsupported_media_type"},
 		{name: "wrong method", method: http.MethodGet, wantStatus: http.StatusMethodNotAllowed, wantCode: "method_not_allowed"},
 		{name: "large request", method: http.MethodPost, contentType: "application/json", body: `{"operation":"` + strings.Repeat("x", maxRequestBytes) + `","left":7,"right":5}`, wantStatus: http.StatusRequestEntityTooLarge, wantCode: "request_too_large"},
+		{name: "large trailing whitespace", method: http.MethodPost, contentType: "application/json", body: `{"operation":"add","left":7,"right":5}` + strings.Repeat(" ", maxRequestBytes), wantStatus: http.StatusRequestEntityTooLarge, wantCode: "request_too_large"},
 	}
 
 	for _, test := range tests {

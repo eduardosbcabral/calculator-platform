@@ -38,21 +38,25 @@ func decodeRequest(w http.ResponseWriter, r *http.Request) (calculationRequest, 
 
 	var input calculationRequest
 	if err := decoder.Decode(&input); err != nil {
-		var tooLarge *http.MaxBytesError
-		if errors.As(err, &tooLarge) {
-			return calculationRequest{}, requestFailure(
-				http.StatusRequestEntityTooLarge,
-				"request_too_large",
-				"Request body is too large.",
-			)
-		}
-		return calculationRequest{}, invalidJSONError()
+		return calculationRequest{}, decodeRequestError(err)
 	}
 	if err := decoder.Decode(&struct{}{}); err != io.EOF {
-		return calculationRequest{}, invalidJSONError()
+		return calculationRequest{}, decodeRequestError(err)
 	}
 
 	return input, nil
+}
+
+func decodeRequestError(err error) *requestError {
+	var tooLarge *http.MaxBytesError
+	if errors.As(err, &tooLarge) {
+		return requestFailure(
+			http.StatusRequestEntityTooLarge,
+			"request_too_large",
+			"Request body is too large.",
+		)
+	}
+	return invalidJSONError()
 }
 
 func invalidJSONError() *requestError {
