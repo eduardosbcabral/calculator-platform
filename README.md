@@ -95,6 +95,25 @@ npm run dev
 
 Vite proxies `/api` and `/healthz` to `http://localhost:8080`.
 
+## Testing and coverage
+
+The backend test suite covers every calculator operation, arithmetic edge cases, request validation, JSON errors, HTTP routing, health checks, and static frontend serving. It also includes a benchmark for the calculation path.
+
+The frontend has seven Vitest and React Testing Library tests covering binary and unary calculations, request payloads, input validation, API errors, loading state, and result rendering. API calls are mocked so the frontend behavior is tested independently from the backend.
+
+Current coverage on `main`:
+
+| Scope | Coverage |
+| --- | ---: |
+| Go, all packages | 81.2% statements |
+| Go, `internal/calculator` | 98.7% statements |
+| React statements | 87.50% |
+| React branches | 85.71% |
+| React functions | 93.75% |
+| React lines | 86.79% |
+
+Frontend coverage has an enforced 80% minimum for statements, branches, functions, and lines. The [GitHub Actions workflow](https://github.com/eduardosbcabral/calculator-platform/actions/workflows/ci.yml) runs both suites and uploads the Go coverage profile and frontend HTML and JSON reports in an artifact named `coverage`.
+
 ## Verification
 
 ```sh
@@ -117,7 +136,7 @@ docker build -t calculator-platform .
 docker run --rm -p 8080:8080 calculator-platform
 ```
 
-Open `http://localhost:8080`. The GitHub Actions workflow repeats formatting, static analysis, tests, coverage, builds, and container smoke tests on every change.
+Open `http://localhost:8080`. CI repeats formatting, static analysis, tests, coverage, builds, and container smoke tests on every change.
 
 ## Deployment
 
