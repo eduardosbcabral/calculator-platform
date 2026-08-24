@@ -110,4 +110,4 @@ Open `http://localhost:8080`. The GitHub Actions workflow repeats formatting, st
 
 The application runs as one Docker service on Coolify. The platform builds the root `Dockerfile`, exposes port 8080, and monitors `/healthz`.
 
-Live application: [calculator-platform.147.15.12.129.sslip.io](https://calculator-platform.147.15.12.129.sslip.io)
+Live application: [calculator.propeller.com.br](https://calculator.propeller.com.br)
