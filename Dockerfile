@@ -12,7 +12,7 @@ COPY cmd/ cmd/
 COPY internal/ internal/
 RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /server ./cmd/api
 
-FROM scratch
+FROM alpine:3.22
 WORKDIR /app
 COPY --from=api /server /app/server
 COPY --from=web /src/frontend/dist /app/frontend/dist

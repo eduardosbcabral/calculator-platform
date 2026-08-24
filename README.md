@@ -108,8 +108,6 @@ Open `http://localhost:8080`. The GitHub Actions workflow repeats formatting, st
 
 ## Deployment
 
-`render.yaml` defines one Docker web service with health checks and deploys only after CI passes.
+The application runs as one Docker service on Coolify. The platform builds the root `Dockerfile`, exposes port 8080, and monitors `/healthz`.
 
-To provision it, create a new Blueprint in the Render dashboard, connect this repository, and apply the detected configuration. Render then builds the `Dockerfile` and monitors `/healthz`.
-
-The free service plan can sleep between requests, so the first request after an idle period may take longer. Change the plan before launch if consistent response time is required.
+Live application: [calculator-platform.147.15.12.129.sslip.io](https://calculator-platform.147.15.12.129.sslip.io)
